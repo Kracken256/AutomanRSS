@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { PropsWithChildren } from 'react';
 import {
@@ -9,13 +10,27 @@ import {
     View,
     ActivityIndicator,
 } from 'react-native';
+import { RouteProp, NavigationProp } from '@react-navigation/native';
 
+type RootStackParamList = {
+    Startup: undefined;
+    // define other routes here
+};
 
-function StartupView() {
+type StartupScreenRouteProp = RouteProp<RootStackParamList, 'Startup'>;
 
+type StartupScreenNavigationProp = NavigationProp<RootStackParamList, 'Startup'>;
+
+type Props = {
+    route: StartupScreenRouteProp;
+    navigation: StartupScreenNavigationProp;
+};
+
+const StartupView = ({ navigation, route }: Props) => {
+    setTimeout(() => navigation.navigate("Home"), 500);
     return (
         <View>
-            <StatusBar backgroundColor={'#111827'}/>
+            <StatusBar backgroundColor={'#111827'} />
             <View className="bg-gray-900 h-screen flex flex-col justify-center items-center">
                 <View className="p-8 bg-gray-600/60 rounded-3xl">
                     <Image resizeMode='stretch' className="w-[200px] h-[200px] " source={require('../assets/logo.png')} />
