@@ -8,10 +8,11 @@ import {
     TextInput,
     Alert
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RouteProp, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FeedObjectStore } from './AddRssFeed';
+import { Navigate } from 'react-router-native';
 
 type Props = {
     route: RouteProp<any>;
@@ -21,6 +22,41 @@ type Props = {
 const EditFeedView = (props: Props) => {
     const [rssFeedText, setrssFeedText] = useState('');
     const [httpHeadersText, sethttpHeadersText] = useState('');
+
+    async function deleteFeed() {
+        console.log('deleting feed: ', rssFeedText);
+        try {
+            let feeds: string | null = await AsyncStorage.getItem("myFeeds");
+
+            let myFeedsJson: FeedObjectStore[] = [];
+            if (feeds == null) {
+                return;
+            } else {
+                let parsed: FeedObjectStore[] | undefined = JSON.parse(feeds);
+                if (parsed) {
+                    myFeedsJson = parsed;
+                } else {
+                    return;
+                }
+            }
+            let initSize: number = myFeedsJson.length;
+            let newFeedsJson = myFeedsJson.filter((item: FeedObjectStore) => { return item.remoteUrl !== feedToEdit.remoteUrl });
+
+            console.log(newFeedsJson);
+            let afterSize: number = newFeedsJson.length;
+            if (afterSize === initSize) {
+                console.log("Nothing to do. This feed does not exist.");
+            } else {
+                let newJsonString = JSON.stringify(newFeedsJson);
+                await AsyncStorage.setItem('myFeeds', newJsonString);
+                console.log("Feed removed.");
+            }
+        } catch (error: any) {
+            console.log('Error while removing feed', error.message);
+        }
+        props.navigation.navigate('Menu');
+        return;
+    }
     async function editFeed() {
         const urlRegex = new RegExp('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?');
         const headersRegex = new RegExp('([\\w]*\\:\\s*[^;.]*\\w*\\;?)+');
@@ -34,19 +70,20 @@ const EditFeedView = (props: Props) => {
         }
         let feeds: string | null = await AsyncStorage.getItem("myFeeds");
 
-        let newFeedsJson: FeedObjectStore[] = [];
+        let myFeedsJson: FeedObjectStore[] = [];
         if (feeds == null) {
-            newFeedsJson = [];
+            myFeedsJson = [];
         } else {
             let parsed: FeedObjectStore[] | undefined = JSON.parse(feeds);
             if (parsed) {
-                newFeedsJson = parsed;
+                myFeedsJson = parsed;
+            } else {
+                return;
             }
         }
-        if (newFeedsJson.filter(e => e.remoteUrl === rssFeedText).length > 0) {
-            Alert.alert("Woops", 'You are already subscribed to that feed');
-            return;
-        }
+        let newFeedsJson = myFeedsJson.filter((item: FeedObjectStore) => { return item.remoteUrl !== rssFeedText && item.remoteUrl !== feedToEdit.remoteUrl });
+        console.log(newFeedsJson);
+
         if (httpHeadersText && httpHeadersText.length > 0) {
             let headersParts: string[] = httpHeadersText.split(';')
             let headers = new Map<string, string>();
@@ -72,12 +109,9 @@ const EditFeedView = (props: Props) => {
             newFeedsJson.push({ remoteUrl: rssFeedText });
         }
         await AsyncStorage.setItem('myFeeds', JSON.stringify(newFeedsJson));
-        //throw new Error("Unable to parse JSON.");
-
-
         props.navigation.navigate('Menu');
     }
-    let feedToEdit: FeedObjectStore | undefined = undefined;
+    let feedToEdit: FeedObjectStore = { remoteUrl: '' };
     if (props.route.params != null) {
         if (props.route.params['feedItem']) {
             feedToEdit = {
@@ -87,7 +121,7 @@ const EditFeedView = (props: Props) => {
 
         }
     }
-    let headerObject = feedToEdit?.headers;
+    let headerObject = feedToEdit.headers;
     let headersString: string = '';
     if (headerObject) {
         for (let [key, value] of Object.entries(headerObject)) {
@@ -97,6 +131,10 @@ const EditFeedView = (props: Props) => {
     if (headersString.endsWith('; ')) {
         headersString = headersString.slice(0, -2);
     }
+    useEffect(() => {
+        setrssFeedText(feedToEdit?.remoteUrl);
+        sethttpHeadersText(headersString);
+    }, []);
     return (
         <View>
             <StatusBar backgroundColor={'#111827'} />
@@ -117,13 +155,13 @@ const EditFeedView = (props: Props) => {
                 <View className="h-full bg-gray-700 flex flex-col items-center p-4 space-y-4">
                     <Text className="text-gray-200 text-lg w-full font-medium">Edit RSS Feed</Text>
                     <Text className="text-gray-400 text-md w-full font-medium">Example: https://myfeedsite.com/feeds/rss.xml</Text>
-                    <TextInput placeholder='RSS feed URL' className="w-full bg-gray-600 p-2 font-medium text-lg text-gray-200 rounded-md px-4" placeholderTextColor={'gray'} onChangeText={newText => setrssFeedText(newText)} value={feedToEdit?.remoteUrl} cursorColor={'orange'} />
+                    <TextInput placeholder='RSS feed URL' className="w-full bg-gray-600 p-2 font-medium text-lg text-gray-200 rounded-md px-4" placeholderTextColor={'gray'} defaultValue={feedToEdit?.remoteUrl} onChangeText={newText => setrssFeedText(newText)} cursorColor={'orange'} />
 
 
                     <View className="bg-gray-800 p-3 w-full rounded-md space-y-4">
                         <Text className="text-gray-400 text-lg w-full font-medium">Advanced Settings</Text>
                         <Text className="text-gray-400 text-md w-full font-mono">Example: header1: value1; header2: value2</Text>
-                        <TextInput placeholder='HTTP headers' className="w-full bg-gray-600 p-2 font-medium text-lg text-gray-200 rounded-md px-4" placeholderTextColor={'gray'} onChangeText={newText => sethttpHeadersText(newText)} autoComplete='off' autoCapitalize='none' autoCorrect={false} defaultValue={headersString} cursorColor={'orange'}/>
+                        <TextInput placeholder='HTTP headers' className="w-full bg-gray-600 p-2 font-medium text-lg text-gray-200 rounded-md px-4" placeholderTextColor={'gray'} autoComplete='off' autoCapitalize='none' autoCorrect={false} defaultValue={headersString} onChangeText={newText => sethttpHeadersText(newText)} cursorColor={'orange'} />
 
                         <Text className="text-gray-400 text-md w-full font-mono">Please note these headers are not encrypted on this device.</Text>
                     </View>
@@ -131,7 +169,7 @@ const EditFeedView = (props: Props) => {
                         <Text className="text-2xl font-semibold text-orange-400">Confirm Edit</Text>
                     </TouchableOpacity>
                     <View className="mr-auto">
-                        <TouchableOpacity className="bg-red-600/70 py-3 px-4 rounded-lg ">
+                        <TouchableOpacity className="bg-red-600/70 py-3 px-4 rounded-lg " onPress={() => deleteFeed()}>
                             <Text className="text-lg text-gray-300 font-medium">Remove Feed</Text>
                         </TouchableOpacity>
                     </View>

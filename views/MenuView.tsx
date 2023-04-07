@@ -9,8 +9,7 @@ import {
     TouchableOpacity,
     FlatList,
 } from 'react-native';
-import { RouteProp, NavigationProp } from '@react-navigation/native';
-import "tailwindcss-react-native/types.d";
+import { RouteProp, NavigationProp, useIsFocused } from '@react-navigation/native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FeedObjectStore } from './AddRssFeed';
@@ -22,8 +21,7 @@ type Props = {
 
 const MenuView = ({ navigation, route }: Props) => {
     const [feeds, setFeeds] = useState<FeedObjectStore[]>([]);
-    const [isUpdatingFeeds, setIsUpdatingFeeds] = useState(false);
-    const [refreshing, setRefreshing] = React.useState(false);
+    const isFocused = useIsFocused();
     useEffect(() => {
         async function getFeedList() {
             let feedsRawData: string | null = await AsyncStorage.getItem('myFeeds');
@@ -39,8 +37,8 @@ const MenuView = ({ navigation, route }: Props) => {
             setFeeds(feedsDecoded);
             console.log("Feeds loaded from storage.");
         }
-        getFeedList();
-    }, []);
+        isFocused && getFeedList();
+    }, [isFocused]);
     return (
         <SafeAreaView>
             <StatusBar backgroundColor={'#111827'} />
@@ -59,15 +57,22 @@ const MenuView = ({ navigation, route }: Props) => {
                     </View>
                 </View>
                 <View className="bg-gray-700/70 h-full pb-[100px] p-3" >
-                    <Text className="text-gray-200 text-xl font-medium">Your RSS feeds:</Text>
-                    <Text className="text-gray-200 text-md my-3">Select url edit</Text>
-                    <FlatList horizontal={false} data={feeds} renderItem={
-                        ({ item }) => (
-                            <TouchableOpacity onPress={() => navigation.navigate('EditFeed', { feedItem: item })}>
-                                <Text className="text-gray-300 text-lg px-3 py-3 bg-gray-900/60 my-2 rounded-xl">{item.remoteUrl}</Text>
-                            </TouchableOpacity>
+                    {
+                        feeds.length == 0 ? (<Text className='text-xl text-gray-200 font-medium'>You are not currently subscribed to any feeds. Click the Add button to add them.</Text>) : (
+                            <View>
+                                <Text className="text-gray-200 text-xl font-medium">Your RSS feeds</Text>
+                                <Text className="text-gray-200 text-md my-3">Select url edit</Text>
+                                <FlatList horizontal={false} data={feeds} renderItem={
+                                    ({ item }) => (
+                                        <TouchableOpacity onPress={() => navigation.navigate('EditFeed', { feedItem: item })}>
+                                            <Text className="text-gray-300 text-lg px-3 py-3 bg-gray-900/60 my-2 rounded-xl">{item.remoteUrl}</Text>
+                                        </TouchableOpacity>
 
-                        )} />
+                                    )} />
+                            </View>
+                        )
+                    }
+
                 </View>
             </View>
         </SafeAreaView>
