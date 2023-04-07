@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import type { PropsWithChildren } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Image,
     SafeAreaView,
@@ -9,27 +8,16 @@ import {
     View,
     TouchableOpacity,
     FlatList,
-    RefreshControl,
-    Alert,
-    ScrollView
 } from 'react-native';
 import { RouteProp, NavigationProp } from '@react-navigation/native';
+import "tailwindcss-react-native/types.d";
 
-import FeedSnip, { FeedSnipProp } from '../components/FeedSnip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FeedObjectStore } from './AddRssFeed';
 
-type RootStackParamList = {
-    Menu: undefined;
-};
-
-type MenuScreenRouteProp = RouteProp<RootStackParamList, 'Menu'>;
-
-type MenuScreenNavigationProp = NavigationProp<RootStackParamList, 'Menu'>;
-
 type Props = {
-    route: MenuScreenRouteProp;
-    navigation: MenuScreenNavigationProp;
+    route: RouteProp<any>;
+    navigation: NavigationProp<any>;
 };
 
 const MenuView = ({ navigation, route }: Props) => {

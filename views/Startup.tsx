@@ -1,10 +1,7 @@
 
 import React from 'react';
-import type { PropsWithChildren } from 'react';
 import {
     Image,
-    SafeAreaView,
-    ScrollView,
     StatusBar,
     Text,
     View,
@@ -12,18 +9,9 @@ import {
 } from 'react-native';
 import { RouteProp, NavigationProp } from '@react-navigation/native';
 
-type RootStackParamList = {
-    Startup: undefined;
-    // define other routes here
-};
-
-type StartupScreenRouteProp = RouteProp<RootStackParamList, 'Startup'>;
-
-type StartupScreenNavigationProp = NavigationProp<RootStackParamList, 'Startup'>;
-
 type Props = {
-    route: StartupScreenRouteProp;
-    navigation: StartupScreenNavigationProp;
+    route: RouteProp<any>;
+    navigation: NavigationProp<any>;
 };
 
 const StartupView = ({ navigation, route }: Props) => {

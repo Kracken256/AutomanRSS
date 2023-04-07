@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import type { PropsWithChildren } from 'react';
 import {
     Image,
     SafeAreaView,
@@ -8,27 +7,17 @@ import {
     Text,
     View,
     TouchableOpacity,
-    FlatList,
-    RefreshControl,
-    Alert
+    FlatList
 } from 'react-native';
-import { NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { RouteProp, NavigationProp } from '@react-navigation/native';
 
 import FeedSnip, { FeedSnipProp } from '../components/FeedSnip';
 import getMyRSSFeeds from '../backend/getFeeds';
 
-type RootStackParamList = {
-    Home: undefined;
-};
-
-type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
-
-type HomeScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
 type Props = {
-    route: HomeScreenRouteProp;
-    navigation: HomeScreenNavigationProp;
+    route: RouteProp<any>;
+    navigation: NavigationProp<any>;
 };
 
 const HomeView = ({ navigation, route }: Props) => {

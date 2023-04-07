@@ -1,15 +1,10 @@
 
 import {
     Image,
-    SafeAreaView,
-    ScrollView,
     StatusBar,
     Text,
     View,
-    ActivityIndicator,
     TouchableOpacity,
-    FlatList,
-    RefreshControl,
     TextInput,
     Alert
 } from 'react-native';
@@ -17,17 +12,9 @@ import React, { useState } from 'react';
 import { RouteProp, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type RootStackParamList = {
-    RssFeedView: undefined;
-};
-
-type RssFeedViewRouteProp = RouteProp<RootStackParamList, 'RssFeedView'>;
-
-type RssFeedViewNavigationProp = NavigationProp<RootStackParamList, 'RssFeedView'>;
-
 type Props = {
-    route: RssFeedViewRouteProp;
-    navigation: RssFeedViewNavigationProp;
+    route: RouteProp<any>;
+    navigation: NavigationProp<any>;
 };
 
 export type FeedObjectStore = {

@@ -2,16 +2,11 @@
 import React, { PureComponent } from 'react';
 import {
     Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
     Text,
     View,
-    ActivityIndicator,
     TouchableOpacity,
-    Alert
 } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 
 export type FeedSnipProp = {
     feedSourceName: string,

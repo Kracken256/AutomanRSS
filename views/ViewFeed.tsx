@@ -10,24 +10,14 @@ import {
     Alert,
     ScrollView
 } from 'react-native';
-import { NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { RouteProp, NavigationProp } from '@react-navigation/native';
 
 import { FeedSnipProp } from '../components/FeedSnip';
 
-type RootStackParamList = {
-    ViewFeed: undefined;
-};
-
-type ViewFeedRouteProp = RouteProp<RootStackParamList, 'ViewFeed'>;
-
-type ViewFeedNavigationProp = NavigationProp<RootStackParamList, 'ViewFeed'>;
-
 type Props = {
-    route: ViewFeedRouteProp;
-    navigation: ViewFeedNavigationProp;
+    route: RouteProp<any>;
+    navigation: NavigationProp<any>;
 };
-
 const ViewFeedView = (props: Props) => {
     let params = props.route.params;
     let feedItem: FeedSnipProp | undefined;

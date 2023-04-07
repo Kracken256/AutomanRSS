@@ -1,15 +1,10 @@
 
 import {
     Image,
-    SafeAreaView,
-    ScrollView,
     StatusBar,
     Text,
     View,
-    ActivityIndicator,
     TouchableOpacity,
-    FlatList,
-    RefreshControl,
     TextInput,
     Alert
 } from 'react-native';
@@ -18,17 +13,9 @@ import { RouteProp, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FeedObjectStore } from './AddRssFeed';
 
-type RootStackParamList = {
-    EditFeedView: undefined;
-};
-
-type EditFeedViewRouteProp = RouteProp<RootStackParamList, 'EditFeedView'>;
-
-type EditFeedViewNavigationProp = NavigationProp<RootStackParamList, 'EditFeedView'>;
-
 type Props = {
-    route: EditFeedViewRouteProp;
-    navigation: EditFeedViewNavigationProp;
+    route: RouteProp<any>;
+    navigation: NavigationProp<any>;
 };
 
 const EditFeedView = (props: Props) => {
@@ -140,7 +127,7 @@ const EditFeedView = (props: Props) => {
 
                         <Text className="text-gray-400 text-md w-full font-mono">Please note these headers are not encrypted on this device.</Text>
                     </View>
-                    <TouchableOpacity className=" p-4 rounded-xl bg-gray-600 absolute right-[20px] bottom-[100px]" onPress={() => addFeed()}>
+                    <TouchableOpacity className=" p-4 rounded-xl bg-gray-600 absolute right-[20px] bottom-[100px]" onPress={() => editFeed()}>
                         <Text className="text-2xl font-semibold text-orange-400">Confirm Edit</Text>
                     </TouchableOpacity>
                     <View className="mr-auto">

@@ -1,16 +1,5 @@
 import React from 'react';
-import type { PropsWithChildren } from 'react';
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-  ActivityIndicator,
-} from 'react-native';
 import StartupView from './views/Startup';
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeView from './views/Home';
